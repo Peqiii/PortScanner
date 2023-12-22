@@ -107,6 +107,19 @@
      <pixmap resource="picture.qrc">:/new/prefix1/C:/Users/weiyu/Pictures/github.gif</pixmap>
     </property>
    </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>291</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Please select the port range first</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

@@ -14,9 +14,16 @@ class Dialog : public QDialog
 public:
     explicit Dialog(QWidget *parent = nullptr);
     ~Dialog();
+    void  getScanParams(int *minPort,int *maxPort);
+
+private slots:
+    void on_buttonBox_accepted();
 
 private:
     Ui::Dialog *ui;
+    int minPort=1;
+    int maxPort=10;
+
 };
 
 #endif // DIALOG_H

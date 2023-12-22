@@ -12,3 +12,17 @@ Dialog::~Dialog()
 {
     delete ui;
 }
+
+void Dialog::getScanParams(int *minPort,int *maxPort)
+{
+    *minPort = this->minPort;
+    *maxPort = this->maxPort;
+    return;
+}
+
+void Dialog::on_buttonBox_accepted()
+{
+    minPort=ui->spinBox_min->value();
+    maxPort=ui->spinBox_max->value();
+    return;
+}
