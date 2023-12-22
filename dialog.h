@@ -14,7 +14,7 @@ class Dialog : public QDialog
 public:
     explicit Dialog(QWidget *parent = nullptr);
     ~Dialog();
-    void  getScanParams(int *minPort,int *maxPort);
+    void  getScanParams(int *minPort,int *maxPort,int *threads);
 
 private slots:
     void on_buttonBox_accepted();
@@ -22,7 +22,8 @@ private slots:
 private:
     Ui::Dialog *ui;
     int minPort=1;
-    int maxPort=10;
+    int maxPort=1024;
+    int threads=10;
 
 };
 
