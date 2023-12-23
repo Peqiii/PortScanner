@@ -8,6 +8,8 @@
 #include <QCloseEvent>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QProcess>
+#include <QElapsedTimer>
 #include "dialog.h"
 #include "scanthread.h"
 
@@ -42,6 +44,10 @@ private slots:
     void on_pushButtonListening_clicked();
 
 
+    void on_pushButton_test_clicked();
+
+    void on_read();
+
 private:
     Ui::MainWindow *ui;
     Dialog dialog;
@@ -54,6 +60,7 @@ private:
     QQueue<int> queuePort;
     int threadCount = 0;
     int threadNum ;     //线程总数
+    QProcess *process;
 
 
 

@@ -194,3 +194,22 @@ void MainWindow::closeEvent ( QCloseEvent * e )
 
 
 
+
+void MainWindow::on_pushButton_test_clicked()
+{
+    QProcess *process = new QProcess(this);
+    QString strIP = ui->lineEdit_IP->text();
+    connect(process, SIGNAL(readyRead()),this, SLOT(on_read()));
+    process->start("ping",QStringList() <<strIP);
+}
+
+void MainWindow::on_read()
+{
+  QProcess *pProces = (QProcess *)sender();
+  QElapsedTimer time;
+  time.start();
+  while(time.elapsed()<5000)
+  QCoreApplication::processEvents();
+  QString result = pProces->readAll();
+  QMessageBox::warning(NULL, "", result);
+}

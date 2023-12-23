@@ -78,9 +78,9 @@
    <widget class="QLineEdit" name="lineEdit_IP">
     <property name="geometry">
      <rect>
-      <x>600</x>
+      <x>540</x>
       <y>140</y>
-      <width>181</width>
+      <width>121</width>
       <height>31</height>
      </rect>
     </property>
@@ -91,7 +91,7 @@
    <widget class="QLabel" name="lable_IPtarget">
     <property name="geometry">
      <rect>
-      <x>460</x>
+      <x>420</x>
       <y>140</y>
       <width>111</width>
       <height>31</height>
@@ -238,7 +238,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Please select the port range first</string>
+     <string>Please click the menu first</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonStop">
@@ -270,9 +270,9 @@
    <widget class="QLabel" name="label_link">
     <property name="geometry">
      <rect>
-      <x>440</x>
+      <x>430</x>
       <y>370</y>
-      <width>151</width>
+      <width>161</width>
       <height>31</height>
      </rect>
     </property>
@@ -290,13 +290,45 @@
      <enum>QFrame::Sunken</enum>
     </property>
     <property name="text">
-     <string>&lt;a href=&quot;https://github.com/Peqiii/PortScanner/tree/master/&quot;&gt;GitHub about this&lt;/a&gt;</string>
+     <string>&lt;a href=&quot;https://github.com/Peqiii/PortScanner/tree/master/&quot;&gt;GitHub about Project&lt;/a&gt;</string>
     </property>
     <property name="openExternalLinks">
      <bool>true</bool>
     </property>
     <property name="buddy">
      <cstring>&lt;a href=&quot;https://github.com/Peqiii/PortScanner/tree/master/&quot;&gt;GitHub Link&lt;/a&gt;</cstring>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_test">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>133</y>
+      <width>91</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>test</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>681</x>
+      <y>180</y>
+      <width>91</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>spend 5 sec</string>
     </property>
    </widget>
   </widget>
