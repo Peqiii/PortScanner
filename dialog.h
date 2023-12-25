@@ -15,6 +15,7 @@ public:
     explicit Dialog(QWidget *parent = nullptr);
     ~Dialog();
     void  getScanParams(int *minPort,int *maxPort,int *threads);
+    void  getmaxPort(int *maxPort);
 
 private slots:
     void on_buttonBox_accepted();

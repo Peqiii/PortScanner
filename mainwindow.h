@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <windows.h>
 #include <QMessageBox>
 #include <QTreeWidget>
 #include <QTcpSocket>
@@ -10,6 +11,7 @@
 #include <QUrl>
 #include <QProcess>
 #include <QElapsedTimer>
+#include <QFileDialog>
 #include "dialog.h"
 #include "scanthread.h"
 
@@ -24,6 +26,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    int proCount=0;
+    QStringList outputStrings;
 
 private slots:
     void on_pushButtonExist_clicked();
@@ -48,6 +53,15 @@ private slots:
 
     void on_read();
 
+    bool ipAddrIsOK(const QString & ip);
+
+    void on_progressBar_valueChanged(int value);
+    void saveOutputToFile(const QString& fileName);
+
+
+
+    void on_pushButton_save_clicked();
+
 private:
     Ui::MainWindow *ui;
     Dialog dialog;
@@ -61,7 +75,6 @@ private:
     int threadCount = 0;
     int threadNum ;     //线程总数
     QProcess *process;
-
 
 
 

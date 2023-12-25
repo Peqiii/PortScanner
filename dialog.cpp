@@ -21,6 +21,12 @@ void Dialog::getScanParams(int *minPort,int *maxPort,int *threads)
     return;
 }
 
+void Dialog::getmaxPort(int *maxPort)
+{
+    *maxPort = this->maxPort;
+    return;
+}
+
 void Dialog::on_buttonBox_accepted()
 {
     minPort=ui->spinBox_min->value();

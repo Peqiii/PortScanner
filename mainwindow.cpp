@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 
@@ -28,13 +28,16 @@ void MainWindow::on_pushButtonExist_clicked()
 
 void MainWindow::on_pushButtonScan_clicked()
 {
+        QString strIP = ui->lineEdit_IP->text();
+        if(ipAddrIsOK(strIP)==false)
+            return;
+
         isStop = false;//再次点击扫描时，flag设置为false
         threadCount = 0;//再次点击时，线程数量计数器清零
         ui->pushButtonStop->setEnabled(true);//再次点击时，停止按钮设置为可用
         ui->pushButtonScan->setEnabled(false);//扫描按钮设置为不可用，扫描结束后或者点击stop后再设置为可用
         ui->pushButtonListening->setEnabled(false);
 
-        QString strIP = ui->lineEdit_IP->text();
         int startPort;
         int endPort;
         int threads;
@@ -61,7 +64,9 @@ void MainWindow::on_pushButtonScan_clicked()
             queuePort.enqueue(i);//端口号加入队列
         }
 
+
         ui->treeWidget_output->clear();
+        outputStrings.clear();
         itemRoot = new QTreeWidgetItem(ui->treeWidget_output, QStringList(strIP));
         //开启十个扫描线程
         for (int i = 0; i< threads; i++) {
@@ -78,13 +83,17 @@ void MainWindow::on_pushButtonScan_clicked()
 
 void MainWindow::on_pushButtonListening_clicked()
 {
+    QString strIP = ui->lineEdit_IP->text();
+    if(ipAddrIsOK(strIP)==false)
+        return;
+
     isStop = false;//再次点击扫描时，flag设置为false
     threadCount = 0;//再次点击时，线程数量计数器清零
     ui->pushButtonStop->setEnabled(true);//再次点击时，停止按钮设置为可用
     ui->pushButtonScan->setEnabled(false);//扫描按钮设置为不可用，扫描结束后或者点击stop后再设置为可用
     ui->pushButtonListening->setEnabled(false);
 
-    QString strIP = ui->lineEdit_IP->text();
+
     int startPort;
     int endPort;
     int threads;
@@ -110,13 +119,13 @@ void MainWindow::on_pushButtonListening_clicked()
     for(int i=startPort; i<=endPort;i++){
         queuePort.enqueue(i);//端口号加入队列
     }
-
+    outputStrings.clear();
     ui->treeWidget_output->clear();
     itemRoot = new QTreeWidgetItem(ui->treeWidget_output, QStringList(strIP));
     //开启十个扫描线程
     for (int i = 0; i< threads; i++) {
         ScanThread *myThread = new ScanThread(strIP, &queuePort, &m_mutex, &isStop);
-        //连接myThread 的信号send_scan_signal(int, bool)和槽函数recv_result(int, bool)
+        //连接myThread 的信号send_scan_signal(int, bool,int)和槽函数recv_result(int, bool,int)
         connect(myThread, SIGNAL(send_scan_signal(int, bool)),this,SLOT(recv_resultListen(int, bool)));
         //当收到线程类的finished信号后，delete线程对象
         connect(myThread, &ScanThread::finished, myThread, &QObject::deleteLater);
@@ -144,20 +153,42 @@ void MainWindow::on_pushButtonStop_clicked()
 //在每次调用 recv_result 函数之前，检查 itemLeaf 指针是否已经指向了一个有效的对象。如果是，首先删除该对象以释放内存。
 void MainWindow::recv_result(int port, bool isOpen)
 {
+    int maxPort;
+    dialog.getmaxPort(&maxPort);
+    ui->progressBar->setRange(0,maxPort);
     QString strPort = QString::number(port);
+    QString outputString;
     if(isOpen)
+    {
         itemLeaf = new QTreeWidgetItem(itemRoot, QStringList(strPort + "is Listening"));
+        outputString = strPort + " is Listening";
+    }
     else
+    {
         itemLeaf = new QTreeWidgetItem(itemRoot, QStringList(strPort + " closed"));
+        outputString = strPort + " closed";
+    }
+    outputStrings.append(outputString);
+    proCount+=1;
+    on_progressBar_valueChanged(proCount);
 }
 
 void MainWindow::recv_resultListen(int port, bool isOpen)
 {
+    int maxPort;
+    dialog.getmaxPort(&maxPort);
+    ui->progressBar->setRange(0,maxPort);
+    QString outputString;
     QString strPort = QString::number(port);
     if (isOpen)
+    {
         itemLeaf = new QTreeWidgetItem(itemRoot, QStringList(strPort + "is Listening"));
+        outputString = strPort + " is Listening";
+        outputStrings.append(outputString);
+    }
+    proCount+=1;
+    on_progressBar_valueChanged(proCount);
 }
-
 void MainWindow::recv_finished_threadnum()
 {
     threadCount ++;
@@ -167,6 +198,9 @@ void MainWindow::recv_finished_threadnum()
         ui->pushButtonStop->setEnabled(false);
         QMessageBox::information(this,"info","Scanner is ending");
     }
+    ui->progressBar->setValue(0);
+    ui->progressBar->setRange(0,100);
+    proCount=0;
 }
 
 
@@ -197,10 +231,14 @@ void MainWindow::closeEvent ( QCloseEvent * e )
 
 void MainWindow::on_pushButton_test_clicked()
 {
-    QProcess *process = new QProcess(this);
     QString strIP = ui->lineEdit_IP->text();
+    if(ipAddrIsOK(strIP)==false)
+        return;
+
+    QProcess *process = new QProcess(this);
     connect(process, SIGNAL(readyRead()),this, SLOT(on_read()));
     process->start("ping",QStringList() <<strIP);
+    on_progressBar_valueChanged(100);
 }
 
 void MainWindow::on_read()
@@ -212,4 +250,54 @@ void MainWindow::on_read()
   QCoreApplication::processEvents();
   QString result = pProces->readAll();
   QMessageBox::warning(NULL, "", result);
+  on_progressBar_valueChanged(0);
+}
+
+
+bool MainWindow::ipAddrIsOK(const QString & ip)
+{
+    QStringList list = ip.split('.');
+    if (list.size() != 4)
+    {
+        QMessageBox::information(this,"Error","This IP is illegal",QMessageBox::Ok);
+        return false;
+    }
+
+    for (const auto& num : list)
+    {
+        bool ok = false;
+        int temp = num.toInt(&ok);
+        if (!ok || temp < 0 || temp > 255)
+        {
+            QMessageBox::information(this,"Error","This IP is illegal",QMessageBox::Ok);
+            return false;
+        }
+    }
+    return true;
+}
+
+void MainWindow::on_progressBar_valueChanged(int value)
+{
+    ui->progressBar->setValue(value);
+}
+
+void MainWindow::saveOutputToFile(const QString& fileName)
+{
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&file);
+        for (const QString& outputString : outputStrings)
+        {
+            out << outputString << "\n"; // 将每个输出字符串写入文件
+        }
+        file.close();
+    }
+    QMessageBox::information(this,"Congratuliations","Saved as output.txt",QMessageBox::Ok);
+}
+
+void MainWindow::on_pushButton_save_clicked()
+{
+    saveOutputToFile("output.txt");
+
 }
