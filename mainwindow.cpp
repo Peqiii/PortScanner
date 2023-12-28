@@ -238,19 +238,20 @@ void MainWindow::on_pushButton_test_clicked()
     QProcess *process = new QProcess(this);
     connect(process, SIGNAL(readyRead()),this, SLOT(on_read()));
     process->start("ping",QStringList() <<strIP);
-    on_progressBar_valueChanged(100);
 }
 
 void MainWindow::on_read()
 {
   QProcess *pProces = (QProcess *)sender();
+  Sleep(100);
+  ui->progressBar->setValue(50);
   QElapsedTimer time;
   time.start();
-  while(time.elapsed()<5000)
+  while(time.elapsed()<4000)
   QCoreApplication::processEvents();
   QString result = pProces->readAll();
+  ui->progressBar->setValue(100);
   QMessageBox::warning(NULL, "", result);
-  on_progressBar_valueChanged(0);
 }
 
 
